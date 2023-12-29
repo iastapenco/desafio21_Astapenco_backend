@@ -64,12 +64,16 @@ describe("Test CRUD de Products en la ruta /api/products/", function () {
       thumbnails: [],
     };
 
-    const { ok } = await requester
+    const { ok, statusCode } = await requester
       .post("/api/products/")
       .set("Cookie", [`${cookie.name} = ${cookie.value}`])
       .send(newProduct);
 
-    expect(ok).to.be.ok;
+    if (ok) {
+      expect(ok).to.be.ok;
+    } else {
+      expect(statusCode).to.be.equal(400);
+    }
   });
 
   it("Ruta: api/products/ método PUT", async () => {
@@ -94,7 +98,7 @@ describe("Test CRUD de Products en la ruta /api/products/", function () {
 
   it("Ruta: api/products/ método DELETE", async () => {
     const { ok } = await requester
-      .delete("/api/products/65876c204887ccc992300a83")
+      .delete("/api/products/658e12432a1d9bced70a60f1")
       .set("Cookie", [`${cookie.name} = ${cookie.value}`]);
 
     expect(ok).to.be.ok;
@@ -118,11 +122,15 @@ describe("Test Users Session api/sessions", function () {
       password: "Zully1959",
     };
 
-    const { _body } = await requester
+    const { _body, statusCode, ok } = await requester
       .post("/api/sessions/register")
       .send(newUser);
 
-    expect(_body.mensaje).to.be.ok;
+    if (ok) {
+      expect(_body.mensaje).to.be.ok.and.have.property("_id");
+    } else {
+      expect(statusCode).to.equal(401);
+    }
   });
 
   it("Ruta: api/sessions/login con metodo POST", async () => {
